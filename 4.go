@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func Write(out chan<- int) {
+func write(out chan<- int) {
 	var isWrite bool = true
 
 	signalChanel := make(chan os.Signal, 1)
@@ -30,7 +30,7 @@ func Write(out chan<- int) {
 	return
 }
 
-func Read(c <-chan int, quantity int) {
+func read(c <-chan int, quantity int) {
 	for i := 0; i < quantity; i++ {
 		go func() {
 			for v := range c {
@@ -53,8 +53,8 @@ func main() {
 
 	c := make(chan int)
 
-	Read(c, quantityReader)
-	Write(c)
+	read(c, quantityReader)
+	write(c)
 
 	close(c)
 }

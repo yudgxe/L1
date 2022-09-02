@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-func printChan(out <-chan int) {
-	for v := range out {
+func printChan(in <-chan int) {
+	for v := range in {
 		fmt.Println(v)
 	}
 }
