@@ -4,14 +4,8 @@ import (
 	"fmt"
 )
 
-func printChan(in <-chan int) {
-	for v := range in {
-		fmt.Println(v)
-	}
-}
-
 // одна горутина считате все квадраты.
-func squares(nums []int) {
+func squares(nums []int) <-chan int {
 	out := make(chan int, len(nums))
 
 	go func() {
@@ -21,11 +15,11 @@ func squares(nums []int) {
 		}
 	}()
 
-	printChan(out)
+	return out
 }
 
 // len(nums) горутин считате квадраты.
-func otherSquares(nums []int) {
+func otherSquares(nums []int) <-chan int {
 	out := make(chan int, len(nums))
 
 	for i, v := range nums {
@@ -39,9 +33,12 @@ func otherSquares(nums []int) {
 		}(i, v)
 	}
 
-	printChan(out)
+	return out
 }
 
 func main() {
-	otherSquares([]int{2, 4, 6, 8, 10})
+	in := squares([]int{2, 4, 6, 8, 10})
+	for v := range in {
+		fmt.Println(v)
+	}
 }
