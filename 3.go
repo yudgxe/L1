@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-func sumSquares(nums []int) int {
-	out := make(chan int, len(nums))
+func sumSquares(nums []int) <-chan int {
+	out := make(chan int)
 	go func() {
 		defer close(out)
 		for _, v := range nums {
@@ -13,14 +13,21 @@ func sumSquares(nums []int) int {
 		}
 	}()
 
-	var sum int
-	for v := range out {
-		sum += v
-	}
+	result := make(chan int)
+	go func() {
+		defer close(result)
 
-	return sum
+		var sum int
+		for v := range out {
+			sum += v
+		}
+
+		result <- sum
+	}()
+
+	return result
 }
 
 func main() {
-	fmt.Println(sumSquares([]int{2, 4, 6, 8, 10}))
+	fmt.Println(<-sumSquares([]int{2, 4, 6, 8, 10}))
 }
